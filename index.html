@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>🍽️ วันนี้กินอะไรดี</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Sarabun', sans-serif; }
+    body { background: #f9f9f9; color: #1c1c1e; display: flex; flex-direction: column; min-height: 100vh; }
+    header { text-align: center; padding: 2rem 1rem; }
+    header h1 { font-size: 2.5rem; }
+    main {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      padding: 1rem;
+    }
+    #ad-left {
+      flex: 1 1 300px;
+      max-width: 400px;
+      padding: 1rem;
+      text-align: center;
+    }
+    #ad-left h2 {
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+      color: gray;
+    }
+    #ad-left img {
+      width: 100%;
+      border-radius: 1rem;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      margin-bottom: 0.5rem;
+    }
+    #ad-left .contact {
+      font-size: 0.95rem;
+      color: #555;
+    }
+    #main-box {
+      flex: 1 1 400px;
+      max-width: 600px;
+      text-align: center;
+      padding: 1rem;
+    }
+    #result {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      font-weight: bold;
+    }
+    button {
+      background: #000;
+      color: #fff;
+      border: none;
+      padding: 1rem 2rem;
+      font-size: 1.1rem;
+      border-radius: 1rem;
+      cursor: pointer;
+      transition: 0.3s;
+      margin: 0.3rem;
+    }
+    button:hover { background: #333; }
+    .green { background: #00b14f; }
+    .green:hover { background: #00923f; }
+    .line { background: #06c755; }
+    .line:hover { background: #059c44; }
+    #comments {
+      flex: 1 1 300px;
+      max-width: 400px;
+      background: #fff;
+      border-radius: 1rem;
+      padding: 1rem;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      margin: 1rem;
+      height: 450px;
+      display: flex;
+      flex-direction: column;
+    }
+    #comments h2 {
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+    }
+    .comment {
+      margin-bottom: 0.5rem;
+      font-size: 0.95rem;
+      background: #f1f1f1;
+      padding: 0.5rem;
+      border-radius: 0.5rem;
+    }
+    #comment-list {
+      flex: 1;
+      overflow-y: auto;
+      margin-bottom: 1rem;
+    }
+    #video-ad {
+      background: #000;
+      text-align: center;
+      margin-top: 2rem;
+    }
+    #video-ad iframe {
+      width: 100%;
+      max-height: 400px;
+      height: auto;
+      aspect-ratio: 16 / 9;
+    }
+    footer {
+      text-align: center;
+      padding: 1rem;
+      font-size: 0.9rem;
+      background: #f0f0f0;
+    }
+    .counter { margin-top: 0.5rem; font-size: 0.9rem; }
+    input[type="text"] {
+      width: 100%;
+      padding: 0.5rem;
+      margin-top: 0.5rem;
+      border-radius: 0.5rem;
+      border: 1px solid #ccc;
+    }
+    @media (max-width: 768px) {
+      #ad-left { display: none; }
+      #comments { order: 3; width: 90%; margin: 1rem auto; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🍽️ วันนี้กินอะไรดี</h1>
+  </header>
+  <main>
+    <div id="ad-left">
+      <h2>โฆษณา</h2>
+      <iframe width="100%" height="230" src="https://www.youtube.com/embed/sXAkBsEcXSo?autoplay=1&mute=1&loop=1&playlist=sXAkBsEcXSo&controls=0&modestbranding=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+      <div class="contact">📞 ติดต่อโฆษณา: 095-4058204 (คุณก้อง ฝ่ายขาย)</div>
+    </div>
+    <div id="main-box">
+      <div id="result">🤔 กดปุ่มเพื่อสุ่มเมนู!</div>
+      <button onclick="randomMenu()">🎲 สุ่มเมนูอาหาร</button><br/>
+      <button class="green" id="grab-btn" onclick="openGrab()">GrabFood 🛵</button>
+      <button class="line" id="line-btn" onclick="openLineMan()">LINE MAN 🍜</button>
+    </div>
+    <div id="comments">
+      <h2>💬 คอมเมนต์สด</h2>
+      <div id="comment-list"></div>
+      <input type="text" id="user-comment" placeholder="พิมพ์คอมเมนต์ของคุณ..." />
+      <button onclick="submitComment()">💬 ส่งคอมเมนต์</button>
+    </div>
+  </main>
+  <section id="video-ad">
+    <iframe src="https://www.youtube.com/embed/i4NiGZmZnyg?autoplay=1&mute=0&loop=1&playlist=i4NiGZmZnyg&controls=0&modestbranding=1"
+      frameborder="0" allow="autoplay; encrypted-media" allowfullscreen>
+    </iframe>
+  </section>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<footer>
+    <div class="counter">
+      👁️ เข้าชมวันนี้: <span id="todayCount">0</span> |
+      สัปดาห์นี้: <span id="weekCount">0</span> |
+      เดือนนี้: <span id="monthCount">0</span>
+    </div>
+    <div style="margin-top: 0.5rem;">© 2025 c NutKongTan Inc</div>
+  </footer>
+  <script>
+    const menus = ["ข้าวมันไก่", "ผัดไทย", "ต้มยำกุ้ง", "เบอร์เกอร์ชีส", "พิซซ่า", "ราเมน", "ไก่ทอดเกาหลี", "ซูชิ", "ข้าวหน้าเนื้อ", "หมูกระทะ", "สปาเก็ตตี้", "ขนมจีนน้ำยา", "ข้าวซอย", "ยำแซลมอน"];
+    let currentMenu = "";
+    function randomMenu() {
+      const index = Math.floor(Math.random() * menus.length);
+      const selected = menus[index];
+      currentMenu = selected;
+      document.getElementById('result').innerHTML = `🍽️ เมนูของคุณคือ: <strong>${selected}</strong>`;
+      addComment(`เพิ่งสุ่มได้: ${selected}`);
+    }
+    function openGrab() {
+      const query = encodeURIComponent(currentMenu || "อาหาร");
+      window.open(`https://food.grab.com/th/th/search?search=${query}`, '_blank');
+    }
+    function openLineMan() {
+      const query = encodeURIComponent(currentMenu || "อาหาร");
+      window.open(`https://www.lineman.com/th/food/search/${query}`, '_blank');
+    }
+    const commentList = document.getElementById("comment-list");
+    const sampleUsers = ["Nok", "Tan", "Kong", "Fern", "Ice", "Max"];
+    function addComment(text) {
+      const el = document.createElement("div");
+      el.className = "comment";
+      el.textContent = text;
+      commentList.prepend(el);
+      if (commentList.childNodes.length > 30) {
+        commentList.removeChild(commentList.lastChild);
+      }
+    }
+    function submitComment() {
+      const input = document.getElementById('user-comment');
+      const text = input.value.trim();
+      if (text === "") return;
+      input.value = "";
+      setTimeout(() => {
+        addComment(`คุณ: ${text}`);
+      }, 3000);
+    }
+    setInterval(() => {
+      const fakeMenus = ["ผัดไทย", "เบอร์เกอร์", "ซูชิ", "ข้าวมันไก่"];
+      addComment(`${sampleUsers[Math.floor(Math.random()*sampleUsers.length)]}: ฉันได้ ${fakeMenus[Math.floor(Math.random()*fakeMenus.length)]}!`);
+    }, 5000);
+    document.getElementById("todayCount").textContent = Math.floor(Math.random() * 1000);
+    document.getElementById("weekCount").textContent = Math.floor(Math.random() * 5000);
+    document.getElementById("monthCount").textContent = Math.floor(Math.random() * 20000);
+  
+    const firebaseConfig = {
+      apiKey: "AIzaSyDm_YxwzvM63AGYhHFOwTSYPGMK9FtD3Fg",
+      authDomain: "menu-app-21fac.firebaseapp.com",
+      databaseURL: "https://menu-app-21fac-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "menu-app-21fac",
+      storageBucket: "menu-app-21fac.appspot.com",
+      messagingSenderId: "533975059262",
+      appId: "1:533975059262:web:0a27944d4ec4e83c3892d0"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    const todayKey = new Date().toISOString().slice(0, 10);
+    const weekKey = "week-" + todayKey.slice(0, 7);
+    const monthKey = "month-" + todayKey.slice(0, 7);
+
+    function incrementCounter(key) {
+      const ref = db.ref(`views/${key}`);
+      ref.transaction((current) => (current || 0) + 1);
+    }
+
+    function listenCounter(key, elementId) {
+      const ref = db.ref(`views/${key}`);
+      ref.on("value", (snapshot) => {
+        document.getElementById(elementId).textContent = snapshot.val() || 0;
+      });
+    }
+
+    incrementCounter(todayKey);
+    incrementCounter(weekKey);
+    incrementCounter(monthKey);
+
+    listenCounter(todayKey, "todayCount");
+    listenCounter(weekKey, "weekCount");
+    listenCounter(monthKey, "monthCount");
+    </script>
+</body>
+</html>
