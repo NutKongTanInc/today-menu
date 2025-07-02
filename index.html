@@ -142,6 +142,7 @@
     <div id="comments">
       <h2>💬 คอมเมนต์สด</h2>
       <div id="comment-list"></div>
+      <input type="text" id="user-name" placeholder="ชื่อของคุณ (เช่น Nut)" />
       <input type="text" id="user-comment" placeholder="พิมพ์คอมเมนต์ของคุณ..." />
       <button onclick="submitComment()">💬 ส่งคอมเมนต์</button>
     </div>
@@ -247,9 +248,18 @@
       window.open(`https://food.grab.com/th/th/search?search=${query}`, '_blank');
     }
     function openLineMan() {
-      const query = encodeURIComponent(currentMenu || "อาหาร");
-      window.open(`https://lineman.line.me/${query}`, '_blank');
-    }
+  const keyword = encodeURIComponent(currentMenu || "อาหาร");
+  const appLink = `linemanfood://search?query=${keyword}`;
+  const webFallback = `https://lineman.line.me/search?keyword=${keyword}`;
+
+  // ลองเปิดแอปก่อน
+  window.location.href = appLink;
+
+  // ถ้าไม่ได้ผล ให้เปิดเว็บหลัง 1 วินาที
+  setTimeout(() => {
+    window.open(webFallback, '_blank');
+  }, 1000);
+}
     const commentList = document.getElementById("comment-list");
     const sampleUsers = [
   "Aom", "Arm", "Bam", "Bank", "Beam", "Benz", "Best", "Bew", "Boss", "Bow",
