@@ -248,10 +248,9 @@
       window.open(`https://food.grab.com/th/th/search?search=${query}`, '_blank');
     }
     function openLineMan() {
-  const keyword = encodeURIComponent(currentMenu || "อาหาร");
-  const appLink = `linemanfood://search?query=${keyword}`;
-  const webFallback = `https://lineman.line.me/search?keyword=${keyword}`;
-
+      const query = encodeURIComponent(currentMenu || "อาหาร");
+      window.open(`https://lineman.onelink.me/1N3T/z60ypyhm=${query}`, '_blank');
+    }
   // ลองเปิดแอปก่อน
   window.location.href = appLink;
 
